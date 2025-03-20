@@ -63,11 +63,11 @@ idx_menu_save = int(idx_menu)
 
 # previous & next buttons widget , change value of idx_menu and save in session_state
 c1, c2,c3 = st.columns([1,8,1])
-if c1.button("⬅️ previous"): 
+if c1.button("⬅️ Previous"): 
     idx_menu-=1
     if idx_menu < 0 : i = 0
     session_state['data']['idx_menu'] = idx_menu
-if c3.button("next ➡️"):
+if c3.button("Next ➡️"):
     idx_menu+=1
     if idx_menu >= len(menutxt) -1 : idx_menu = len(menutxt) -1 
     session_state['data']['idx_menu'] = idx_menu
@@ -90,7 +90,7 @@ with st.sidebar:
         idx_menu = 0
     # with st.expander("question part A", expanded= False) :
     expanded = True if (idx_menu > 0) & (idx_menu < LenA + 1) else False
-    ex = st.expander("question part A", expanded= expanded)    
+    ex = st.expander("Question part A", expanded= expanded)    
     for i in range(LenA):
         idx = i        
         c1, c2 = ex.columns(2) 
@@ -98,11 +98,11 @@ with st.sidebar:
         if c1.button(f"Question {idx+1}", use_container_width=True):
                 idx_menu = i+1
         if None not in data['Q' +str(idx+1)] :
-                c2.success('finish')
-        else : c2.warning('pending')
+                c2.success('Finish')
+        else : c2.warning('Pending')
         session_state['data']['idx_menu'] = idx_menu
     expanded = True if (idx_menu > LenA) & (idx_menu < LenB+LenA+1) else False
-    ex = st.expander("question part B", expanded= expanded)    
+    ex = st.expander("Question part B", expanded= expanded)    
     for i in range(LenB):
         idx = i+LenA        
         c1, c2 = ex.columns(2) 
@@ -110,8 +110,8 @@ with st.sidebar:
         if c1.button(f"Question {i+1}",key = {f"Q{i+ LenA +1}"} , use_container_width=True):
                 idx_menu = i+LenA+1
         if None not in data['Q' +str(i+LenA +1)] :
-                c2.success('finish')
-        else : c2.warning('pending')
+                c2.success('Finish')
+        else : c2.warning('Pending')
         session_state['data']['idx_menu'] = idx_menu
 
     if st.button('Output'):
