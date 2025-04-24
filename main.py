@@ -30,8 +30,8 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-LenA = 3
-LenB = 3
+LenA = 4
+LenB = 4
 
 menutxt = ['Objective']
 menutxt+= [f'Q{i+1}' for i in range(LenA + LenB)]
