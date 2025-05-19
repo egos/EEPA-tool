@@ -8,6 +8,8 @@ from datetime import datetime
 import copy
 import json
 from io import StringIO
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # print('-*BEGIN*-')
 DateNow= datetime.now().strftime("%Y_%m_%d-%H_%M_%S")
@@ -29,10 +31,7 @@ st.markdown(
 lenA = 4
 lenB = 4
 
-menutxt = ['Objective']
-menutxt+= [f'Q{i+1}' for i in range(lenA + lenB)]
-# menutxt+= [f'Q{i+1}' for i in range(10)]
-menutxt+= ['Output']
+
 
 st.sidebar.image("assets/image1.png", use_container_width=True)
 st.sidebar.image("assets/image2.png", use_container_width=True)
@@ -57,6 +56,11 @@ lenB = data['lenB']
 dfa = data['dfa'].copy()
 dfb = data['dfb'].copy()
 dfp = data['dfp'].copy()
+
+menutxt = ['Objective']
+menutxt+= [f'Q{i+1}' for i in range(lenA + lenB)]
+# menutxt+= [f'Q{i+1}' for i in range(10)]
+menutxt+= ['Output']
 
 # previous & next buttons widget , change value of idx_menu and save in session_state
 c1, c2,c3 = st.columns([1,8,1])
@@ -139,7 +143,7 @@ if (idx_menu > 0) & (idx_menu < lenA + 1):
     c = st.columns([0.8,0.2])
     c[0].write(f"**Question**") 
     c[1].write('Response :')  
-    # st.write(f"**{Title}**")   
+    
     Letters = list('abcde')  
 
     i = 0 
@@ -220,13 +224,28 @@ elif (idx_menu > lenA) & (idx_menu < lenA+lenB + 1):
         session_state['data'] = data
 
 if idx_menu  == lenA +lenB + 1:
-     st.subheader('Output')
-     tabs = st.tabs(["OUTPUT-Part B Scorecard", "Output P1", "Output P2"])     
-     tabs[0].image("assets/SC1.png", use_container_width=True, )
-     tabs[1].image("assets/SC2.png", use_container_width=True, )
-     tabs[2].image("assets/SC3.png", use_container_width=True, )
+    st.subheader('Output')
+    L = [data[f'Q{i}'] for i in range(lenA+1,lenB + lenA + 1)]
+    dfb2 = dfb.copy()[['Definition','Title','Pillar']].rename(columns={"Definition": "category",'Title' :'question'})
+    dfb2.loc[:lenB,['Current', 'Aspirational']] = L 
+    dfb2['Aspirational'] -= dfb2['Current'] 
+    # dfb2['Current']       = np.random.randint(1, 6, size=len(dfb2))
+    # dfb2['Aspirational']  = np.random.randint(1, 6, size=len(dfb2))-dfb2['Current'] 
 
-print('idx_menu' , idx_menu)
+    tabs = st.tabs(["OUTPUT-Part B Scorecard",
+                     "Output P1", "Output P2","Output P3","Output P4"]) 
+    tabs[0].image("assets/SC1.png", use_container_width=True, )
+    for pn in [1,2,3,4]:           
+        with tabs[pn] :
+            # pn = 1
+            df = dfb2[dfb2.Pillar == pn]
+            Pillar = dfp.loc[pn].tolist()[0]
+            tabs[pn].plotly_chart(plot_output2(df, Pillar))  
+    
+    # tabs[1].image("assets/SC2.png", use_container_width=True, )
+    # tabs[2].image("assets/SC3.png", use_container_width=True, )
+
+print('idx_menu' , idx_menu, lenA, lenB)
 # print(dfb)
 # print(session_state['data'])
 # for k,v in session_state['data'].items():
